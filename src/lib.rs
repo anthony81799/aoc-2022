@@ -1,14 +1,17 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+use std::{fmt::Debug, fs, path::Path, str::FromStr};
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+pub fn read_number_input<T: AsRef<Path>, U: FromStr>(path: T) -> Vec<Vec<U>>
+where
+    <U as FromStr>::Err: Debug,
+{
+    fs::read_to_string(path)
+        .expect("Unable to open file")
+        .split("\n\n")
+        .filter(|s| !s.is_empty())
+        .map(|s| {
+            s.split('\n')
+                .map(|n| n.parse::<U>().expect("Unable to Parse"))
+                .collect::<Vec<U>>()
+        })
+        .collect()
 }
