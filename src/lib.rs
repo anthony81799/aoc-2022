@@ -1,4 +1,10 @@
-use std::{fmt::Debug, fs, path::Path, str::FromStr};
+use std::{
+    fmt::Debug,
+    fs::{self, File},
+    io::{BufRead, BufReader},
+    path::Path,
+    str::FromStr,
+};
 
 pub fn read_number_input<T: AsRef<Path>, U: FromStr>(path: T) -> Vec<Vec<U>>
 where
@@ -13,5 +19,13 @@ where
                 .map(|n| n.parse::<U>().expect("Unable to Parse"))
                 .collect::<Vec<U>>()
         })
+        .collect()
+}
+
+pub fn read_string_input(path: impl AsRef<Path>) -> Vec<String> {
+    let file = File::open(path).expect("File not opened");
+    let buf = BufReader::new(file);
+    buf.lines()
+        .map(|l| l.expect("Could not parse line"))
         .collect()
 }
