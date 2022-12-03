@@ -4,12 +4,12 @@ fn main() {
     part_2(&elves);
 }
 
-fn part_1(elves: &Vec<Vec<i32>>) {
+fn part_1(elves: &[Vec<i32>]) {
     let cals = sort_elves(elves);
     println!("Part 1: {:#?}", cals.iter().take(1).sum::<i32>())
 }
 
-fn part_2(elves: &Vec<Vec<i32>>) {
+fn part_2(elves: &[Vec<i32>]) {
     let cals = sort_elves(elves);
     println!("Part 2: {:#?}", cals.iter().take(3).sum::<i32>())
 }
