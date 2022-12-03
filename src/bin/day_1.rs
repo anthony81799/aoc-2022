@@ -1,5 +1,5 @@
 fn main() {
-    let elves: Vec<Vec<i32>> = aoc_2022::read_number_input("../inputs/day-1.txt");
+    let elves: Vec<Vec<i32>> = aoc_2022::read_number_input("inputs/day_1.txt");
     part_1(&elves);
     part_2(&elves);
 }
