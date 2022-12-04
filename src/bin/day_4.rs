@@ -1,7 +1,7 @@
 fn main() {
     let vec_map = |t: Vec<&str>| t.iter().map(|s| s.parse::<u8>().unwrap()).collect();
-    let input: Vec<Vec<u8>> = include_str!("../inputs/day_4.txt")
-        .lines()
+    let input: Vec<Vec<u8>> = aoc_2022::read_string_input("inputs/day_4.txt")
+        .iter()
         .map(|l| l.split(','))
         .map(|mut s| (s.next().unwrap().split('-'), s.next().unwrap().split('-')))
         .map(|(e1, e2)| vec_map(e1.chain(e2).collect()))
