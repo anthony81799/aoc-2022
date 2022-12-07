@@ -16,7 +16,7 @@ fn solve(file_contents: &str, bound: usize) {
         }
         count += 1;
         if start_of_payload(&last_four, bound) {
-            println!("{}", count);
+            println!("{count}");
             return;
         }
     }
