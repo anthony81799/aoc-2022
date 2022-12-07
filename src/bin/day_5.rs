@@ -10,7 +10,7 @@ fn main() {
         "VHPSZWRB".to_owned(),
         "BMJCGHZW".to_owned(),
     ];
-    
+
     let file_contents = aoc_2022::read_string_input("src/inputs/day_5.txt");
     for line in file_contents.iter() {
         let task: Vec<usize> = line
