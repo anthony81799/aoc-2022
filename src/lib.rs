@@ -29,3 +29,7 @@ pub fn read_string_input(path: impl AsRef<Path>) -> Vec<String> {
         .map(|l| l.expect("Could not parse line"))
         .collect()
 }
+
+pub fn read_input(path: impl AsRef<Path>) -> String {
+    fs::read_to_string(path).unwrap()
+}
