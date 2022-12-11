@@ -14,8 +14,8 @@ fn main() {
             || y == 0
     };
 
-    let tree_map: Vec<Vec<u8>> = include_str!("../inputs/day_8.txt")
-        .lines()
+    let tree_map: Vec<Vec<u8>> = aoc_2022::read_string_input("../inputs/day_8.txt")
+        .iter()
         .filter(|l| !l.is_empty())
         .map(|s| s.chars().map(|c| c as u8 - 0x30).collect::<Vec<u8>>())
         .collect();
