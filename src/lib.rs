@@ -30,6 +30,6 @@ pub fn read_string_input(path: impl AsRef<Path>) -> Vec<String> {
         .collect()
 }
 
-pub fn read_input(path: impl AsRef<Path>) -> String {
+pub fn read_input_buffer(path: impl AsRef<Path>) -> String {
     fs::read_to_string(path).unwrap()
 }
