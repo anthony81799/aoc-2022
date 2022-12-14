@@ -56,6 +56,7 @@ fn parse_input(input: Vec<&String>) -> Vec<Monkey> {
                         Op::Add(words[5].parse().unwrap())
                     }
                 } else {
+                    #[allow(clippy::collapsible_else_if)]
                     if words[5] == "old" {
                         Op::MultiplySelf
                     } else {

@@ -11,10 +11,7 @@ type Info = (Vec<Vec<u8>>, (usize, usize), (usize, usize));
 
 const DIRECTIONS: [(i32, i32); 4] = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
-fn get_surrounding_points(
-    info: &Info,
-    position: (usize, usize),
-) -> Vec<(usize, usize)> {
+fn get_surrounding_points(info: &Info, position: (usize, usize)) -> Vec<(usize, usize)> {
     let ipos = (position.0 as i32, position.1 as i32);
     let width = info.0[0].len() as i32;
     let height = info.0.len() as i32;
@@ -69,10 +66,7 @@ fn part_2(info: &Info) {
     );
 }
 
-fn find_shortest(
-    info: &Info,
-    start_point: (usize, usize),
-) -> Option<usize> {
+fn find_shortest(info: &Info, start_point: (usize, usize)) -> Option<usize> {
     let mut to_visit = Vec::new();
     let mut shortest: HashMap<(usize, usize), usize> = HashMap::new();
     shortest.insert(start_point, 0);
