@@ -40,42 +40,42 @@ fn part_1(sensors: &[Sensor]) {
     println!("Part 1: {}", coverage.len() - beacons.len())
 }
 fn part_2(sensors: &[Sensor]) {
-    let mut row_data = vec![vec![0..=4000000]; 4000001];
-    for s in sensors {
-        let radius = s.radius();
-        let top = 0.max(s.location.1 - radius);
-        let bottom = 4000000.min(s.location.1 + radius);
-        for row in top..=bottom {
-            let distance = (s.location.1 - row).abs();
-            let min_x = 0.max(s.location.0 - (radius - distance));
-            let max_x = 4000000.min(s.location.0 + (radius - distance));
+    for row in 0..=4000000 {
+        let mut row_data = vec![0..=4000000];
+        for sensor in sensors {
+            let radius = sensor.radius();
+            let top = 0.max(sensor.location.1 - radius);
+            let bottom = 4000000.min(sensor.location.1 + radius);
+            if top > row || bottom < row {
+                continue;
+            }
+            let distance = (sensor.location.1 - row).abs();
+            let min_x = 0.max(sensor.location.0 - (radius - distance));
+            let max_x = 4000000.min(sensor.location.0 + (radius - distance));
             let mut new_range = Vec::new();
-            for r in &row_data[row as usize] {
-                let start = r.start();
-                if *start > max_x {
+            for r in &row_data {
+                let start = *r.start();
+                if start > max_x {
                     new_range.push(r.clone());
                     continue;
                 }
-                let end = r.end();
-                if *end < min_x {
+                let end = *r.end();
+                if end < min_x {
                     new_range.push(r.clone());
                     continue;
                 }
-                if *start < min_x {
-                    new_range.push(*start..=min_x -1);
+                if start < min_x {
+                    new_range.push(start..=min_x -1);
                 }
-                if *end > max_x {
-                    new_range.push(max_x + 1..=*end);
+                if end > max_x {
+                    new_range.push(max_x + 1..=end);
                 }
             }
-            row_data[row as usize] = new_range;
+            row_data = new_range;
         }
-    }
-
-    for (y, r) in row_data.iter().enumerate() {
-        if !r.is_empty() {
-            let x = *r[0].start();
-            println!("Part 2: {}", x * 4000000 + y as i64);
+        if !row_data.is_empty() {
+            let x = *row_data[0].start();
+            println!("Part 2: {}", x * 4000000 + row);
             break;
         }
     }
