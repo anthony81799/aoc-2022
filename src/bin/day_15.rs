@@ -65,7 +65,7 @@ fn part_2(sensors: &[Sensor]) {
                     continue;
                 }
                 if start < min_x {
-                    new_range.push(start..=min_x -1);
+                    new_range.push(start..=min_x - 1);
                 }
                 if end > max_x {
                     new_range.push(max_x + 1..=end);
