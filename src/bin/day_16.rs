@@ -6,7 +6,7 @@ use regex::Regex;
 use lazy_static::lazy_static;
 
 static INPUT: &str = "src/bin/day_16.txt";
-const ROUNDS: u32 = 30;
+const ROUNDS: u32 = 26; // 30 for part 1
 
 #[derive(Clone, Debug)]
 struct Node {
@@ -17,71 +17,93 @@ struct Node {
 #[derive(Debug)]
 struct Solver {
     graph: WeightedGraph,
-    steps: Vec<usize>,
-    time: u32,
-    pos: usize,
+    steps: Vec<Vec<usize>>,
+    time: Vec<u32>,
+    pos: Vec<usize>,
 }
 
 impl Solver {
-    fn new(graph: WeightedGraph) -> Self {
+    fn new(graph: WeightedGraph, n_players: usize) -> Self {
         Self {
             graph,
-            steps: vec![0],
-            time: ROUNDS,
-            pos: 0,
+            steps: vec![vec![0]; n_players],
+            time: vec![ROUNDS; n_players],
+            pos: vec![0; n_players],
         }
     }
 
     fn score(&self) -> u32 {
         let mut score = 0;
-        let mut t = ROUNDS;
-        for i in 1..self.steps.len() {
-            t -= self.graph.weights[self.steps[i-1]][self.steps[i]];
-            score += self.graph.rates[self.steps[i]] * t;
+        for steps in self.steps.iter() {
+            let mut t = ROUNDS;
+            for i in 1..steps.len() {
+                t -= self.graph.weights[steps[i-1]][steps[i]];
+                score += self.graph.rates[steps[i]] * t;
+            }
         }
         score
     }
 
-    fn advance(&mut self, next: usize) {
-        self.time -= self.graph.weights[*self.steps.last().unwrap()][next];
-        self.steps.push(next);
-        self.pos = next;
+    fn advance(&mut self, next: usize, player: usize) {
+        self.time[player] -= self.graph.weights[*self.steps[player].last().unwrap()][next];
+        self.steps[player].push(next);
+        self.pos[player] = next;
     }
 
-    fn backtrack(&mut self) {
-        let last = self.steps.pop().unwrap();
-        let prev = *self.steps.last().unwrap();
-        self.time += self.graph.weights[prev][last];
-        self.pos = prev;
+    fn backtrack(&mut self, player: usize) {
+        let last = self.steps[player].pop().unwrap();
+        let prev = *self.steps[player].last().unwrap();
+        self.time[player] += self.graph.weights[prev][last];
+        self.pos[player] = prev;
     }
 
-    fn options(&self, time_left: u32) -> Vec<usize> {
+    fn options(&self, player: usize, time_left: u32) -> Vec<usize> {
         (1..self.graph.len()).into_iter()
             .filter(|idx| {
-                for s in self.steps.iter() {
+                for s in self.steps.iter().flatten() {
                     if idx == s {
                         return false;
                     }
                 }
-                self.graph.weights[self.pos][*idx] <= time_left
+                self.graph.weights[self.pos[player]][*idx] <= time_left
             }).collect()
     }
 
     fn search(mut self) -> (Self, u32) {
-        let opt = self.options(self.time);
-        if opt.is_empty() {
+        let mut max_score = 0;
+        let opt0 = self.options(0, self.time[0]);
+        if opt0.is_empty() {
+            let opt1 = self.options(1, self.time[1]);
+            return self.search_moves(&opt1, 1);
+        }
+
+        for m0 in opt0 {
+            self.advance(m0, 0);
+            let opt1 = self.options(1, self.time[1]);
+            let score;
+            (self, score) = self.search_moves(&opt1, 1);
+            if score > max_score {
+                max_score = score;
+            }
+            self.backtrack(0);
+        }
+        (self, max_score)
+    }
+
+    fn search_moves(mut self, moves: &[usize], player: usize) -> (Self, u32) {
+        if moves.is_empty() {
             let score = self.score();
             return (self, score);
         }
         let mut max_score = 0;
-        for m in opt {
-            self.advance(m);
+        for &m in moves {
+            self.advance(m, player);
             let score;
             (self, score) = self.search();
             if score > max_score {
                 max_score = score;
             }
-            self.backtrack();
+            self.backtrack(player);
         }
         (self, max_score)
     }
@@ -161,7 +183,7 @@ fn main() {
     let (all_nodes, start) = parse_input(&input);
     let graph = get_weighted_graph(&all_nodes, start);
     //println!("{:?}", graph);
-    let solver = Solver::new(graph);
+    let solver = Solver::new(graph, 2);
     let (_solver, score) = solver.search();
     println!("{score}");
 }
