@@ -1,9 +1,9 @@
+use std::collections::{HashMap, VecDeque};
 use std::fs;
 use std::process::exit;
-use std::collections::{HashMap, VecDeque};
 
-use regex::Regex;
 use lazy_static::lazy_static;
+use regex::Regex;
 
 static INPUT: &str = "src/bin/day_16.txt";
 const ROUNDS: u32 = 26; // 30 for part 1
@@ -11,7 +11,7 @@ const ROUNDS: u32 = 26; // 30 for part 1
 #[derive(Clone, Debug)]
 struct Node {
     rate: u32,
-    adj: Vec<usize>
+    adj: Vec<usize>,
 }
 
 #[derive(Debug)]
@@ -37,7 +37,7 @@ impl Solver {
         for steps in self.steps.iter() {
             let mut t = ROUNDS;
             for i in 1..steps.len() {
-                t -= self.graph.weights[steps[i-1]][steps[i]];
+                t -= self.graph.weights[steps[i - 1]][steps[i]];
                 score += self.graph.rates[steps[i]] * t;
             }
         }
@@ -58,7 +58,8 @@ impl Solver {
     }
 
     fn options(&self, player: usize, time_left: u32) -> Vec<usize> {
-        (1..self.graph.len()).into_iter()
+        (1..self.graph.len())
+            .into_iter()
             .filter(|idx| {
                 for s in self.steps.iter().flatten() {
                     if idx == s {
@@ -66,7 +67,8 @@ impl Solver {
                     }
                 }
                 self.graph.weights[self.pos[player]][*idx] <= time_left
-            }).collect()
+            })
+            .collect()
     }
 
     fn search(mut self) -> (Self, u32) {
@@ -162,9 +164,12 @@ fn get_weighted_graph(nodes: &[Node], start: usize) -> WeightedGraph {
                     visited[w] = true;
                     dist_to_v[w] = dist + 1;
                     if nodes[w].rate > 0 {
-                        graph.add_edge(to_val_idx[v].unwrap(), to_val_idx[w].unwrap(),
-                           // Add one more to account for time opening the valve
-                           dist + 2);
+                        graph.add_edge(
+                            to_val_idx[v].unwrap(),
+                            to_val_idx[w].unwrap(),
+                            // Add one more to account for time opening the valve
+                            dist + 2,
+                        );
                     }
                     q.push_back(w);
                 }
@@ -175,11 +180,10 @@ fn get_weighted_graph(nodes: &[Node], start: usize) -> WeightedGraph {
 }
 
 fn main() {
-    let input = fs::read_to_string(INPUT)
-        .unwrap_or_else(|e| {
-            eprintln!("Could not read input file: {e}");
-            exit(1);
-        });
+    let input = fs::read_to_string(INPUT).unwrap_or_else(|e| {
+        eprintln!("Could not read input file: {e}");
+        exit(1);
+    });
     let (all_nodes, start) = parse_input(&input);
     let graph = get_weighted_graph(&all_nodes, start);
     //println!("{:?}", graph);
@@ -190,9 +194,9 @@ fn main() {
 
 fn parse_input(input: &str) -> (Vec<Node>, usize) {
     lazy_static! {
-        static ref PAT: Regex = Regex::new(
-            r"^Valve ([A-Z]{2}) has flow rate=(\d+); tunnels? leads? to valves? ")
-            .unwrap();
+        static ref PAT: Regex =
+            Regex::new(r"^Valve ([A-Z]{2}) has flow rate=(\d+); tunnels? leads? to valves? ")
+                .unwrap();
     }
     let mut nodes = Vec::new();
     let mut code_to_idx: HashMap<&str, usize> = HashMap::new();
@@ -206,8 +210,7 @@ fn parse_input(input: &str) -> (Vec<Node>, usize) {
         code_to_idx.insert(code, i);
         let rate = caps.get(2).unwrap().as_str().parse().unwrap();
         let match_size = caps.get(0).unwrap().end();
-        let adj = line[match_size..].split(", ")
-            .collect();
+        let adj = line[match_size..].split(", ").collect();
         adjacent_code.push(adj);
         nodes.push(Node {
             rate,
@@ -215,7 +218,8 @@ fn parse_input(input: &str) -> (Vec<Node>, usize) {
         });
     }
     for (i, adj_code) in adjacent_code.iter().enumerate() {
-        let adj: Vec<usize> = adj_code.iter()
+        let adj: Vec<usize> = adj_code
+            .iter()
             .map(|code| *code_to_idx.get(code).unwrap())
             .collect();
         nodes[i].adj = adj;
