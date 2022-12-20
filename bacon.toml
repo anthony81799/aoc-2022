@@ -54,7 +54,7 @@ need_stdout = false
 [jobs.run]
 command = [
     "cargo", "run", "--color", "always",
-    "--bin", "day_18",
+    "--bin", "day_17",
     # add here the options of your program, if needed
 ]
 need_stdout = true
