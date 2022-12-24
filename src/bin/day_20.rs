@@ -7,7 +7,10 @@ fn parse_input(scale: i64) -> Vec<Val> {
     let input = aoc_2022::read_string_input("src/bin/day_20.txt");
     let mut nums = Vec::new();
     for (index, line) in input.iter().enumerate() {
-        nums.push(Val { original_index: index, value: line.parse::<i64>().unwrap() * scale });
+        nums.push(Val {
+            original_index: index,
+            value: line.parse::<i64>().unwrap() * scale,
+        });
     }
     nums
 }
@@ -27,7 +30,10 @@ impl Val {
         let max_i = numbers.len() as i64 - 1;
         for _ in 0..cycles {
             for current in 0..numbers.len() {
-                let index = numbers.iter().position(|n| n.original_index == current).unwrap();
+                let index = numbers
+                    .iter()
+                    .position(|n| n.original_index == current)
+                    .unwrap();
                 let mut new_index = index as i64 + numbers[index].value;
                 new_index = ((new_index % max_i) + max_i) % max_i;
                 let number = numbers.remove(index);
